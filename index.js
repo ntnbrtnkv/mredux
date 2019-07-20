@@ -1,4 +1,32 @@
-import { createStore } from "redux";
+// import { createStore } from "redux";
+
+const createStore = (reducer) => {
+  let state;
+  let listeners = [];
+  
+  const getState = () => state;
+  
+  const subscribe = (cb) => {
+    listeners.push(cb);
+    return () => {
+      const index = listeners.indexOf(cb);
+      listeners.splice(index, 1);
+    }
+  };
+  
+  const dispatch = (action) => {
+    state = reducer(state, action);
+    listeners.forEach(cb => cb());
+  };
+  
+  dispatch({type: '@@myredux/INIT'});
+  
+  return {
+    getState,
+    subscribe,
+    dispatch
+  };
+}
 
 const counter = (state = 0, action) => {
   switch (action.type) {
