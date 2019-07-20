@@ -2,7 +2,16 @@
 
 ## Getting started
 
-1. ```yarn install```
-2. ```yarn start```
-3. open url from cmd in browser
-4. start learning
+1. Online from CodePen https://codepen.io/ntnbrtnkv/pen/zgGBpv
+
+    or
+
+2. Local
+
+    2.1. ```yarn install```
+
+    2.2. ```yarn start```
+
+    2.3. open url from cmd in browser
+
+    2.4. start learning
