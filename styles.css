@@ -1,0 +1,19 @@
+body {
+  font-size: 2em;
+}
+
+#todo {
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+}
+
+.done:after {
+  content: "✔";
+  color: green;
+}
+
+.not_done:after {
+  content: "❌";
+  color: red;
+}
