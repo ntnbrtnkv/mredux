@@ -1,32 +1,55 @@
-import { createStore, applyMiddleware } from "redux";
+// import { createStore, applyMiddleware } from "redux";
 
-// const createStore = (reducer) => {
-//   let state;
-//   let listeners = [];
+function createStore(reducer, enhancer) {
+  let state;
+  let listeners = [];
+
+  if (typeof enhancer !== 'undefined') {
+    return enhancer(createStore)(reducer);
+  }
   
-//   const getState = () => state;
+  const getState = () => state;
   
-//   const subscribe = (cb) => {
-//     listeners.push(cb);
-//     return () => {
-//       const index = listeners.indexOf(cb);
-//       listeners.splice(index, 1);
-//     }
-//   };
+  const subscribe = (cb) => {
+    listeners.push(cb);
+    return () => {
+      const index = listeners.indexOf(cb);
+      listeners.splice(index, 1);
+    }
+  };
   
-//   const dispatch = (action) => {
-//     state = reducer(state, action);
-//     listeners.forEach(cb => cb());
-//   };
+  const dispatch = (action) => {
+    state = reducer(state, action);
+    listeners.forEach(cb => cb());
+  };
   
-//   dispatch({type: '@@myredux/INIT'});
+  dispatch({type: '@@myredux/INIT'});
   
-//   return {
-//     getState,
-//     subscribe,
-//     dispatch
-//   };
-// }
+  return {
+    getState,
+    subscribe,
+    dispatch
+  };
+}
+
+const applyMiddleware = (...middlewares) => {
+  return createStore => (...args) => {
+    const store = createStore(...args);
+
+    const middlewareAPI = {
+      getState: store.getState
+    };
+
+    const chain = middlewares.map(m => m(middlewareAPI));
+    const compose = (...funcs) => funcs.reduce((a, b) => (...args) => a(b(...args)));
+    const dispatch = compose(...chain)(store.dispatch);
+
+    return {
+      ...store,
+      dispatch
+    }
+  }
+}
 
 const counter = (state = 0, action) => {
   switch (action.type) {
