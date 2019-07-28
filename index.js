@@ -1,3 +1,5 @@
+import { observable, autorun } from "mobx";
+
 // mobx.js
 
 let currentRunning;
@@ -19,7 +21,7 @@ function box(initial) {
   }
 }
 
-function autorun(cb) {
+function _autorun(cb) {
   const reaction = {
     observing: [],
     run() {
@@ -36,17 +38,19 @@ function autorun(cb) {
 
 // index.js
 
-const todo = box("Learn MobX");
-const done = box(false);
+const todo = observable({
+  title: "Learn MobX",
+  done: false,
+})
 
 function onTodoClick() {
-  done.set(!done.get());
+  todo.done = !todo.done;
 }
 
 autorun(() => {
   document.getElementById("todo").innerHTML = `<h2 class=${
-    done.get() ? "done" : "not_done"
-  }>${todo.get()}</h2>`;
+    todo.done ? "done" : "not_done"
+  }>${todo.title}</h2>`;
 });
 
 document.getElementById("todo").addEventListener("click", onTodoClick);
