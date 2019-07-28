@@ -1,5 +1,3 @@
-import { observable, autorun } from "mobx";
-
 // mobx.js
 
 let currentRunning;
@@ -21,7 +19,7 @@ function box(initial) {
   }
 }
 
-function _autorun(cb) {
+function autorun(cb) {
   const reaction = {
     observing: [],
     run() {
@@ -34,6 +32,28 @@ function _autorun(cb) {
     }
   }
   reaction.run();
+}
+
+function observable(obj) {
+  const res = {
+    $mobx: {}
+  };
+
+  Object.keys(obj).forEach(key => {
+    res.$mobx[key] = box(obj[key]);
+  });
+
+  const proxy = new Proxy(res, {
+    get(target, prop) {
+      return target.$mobx[prop].get();
+    },
+    set(target, prop, value) {
+      target.$mobx[prop].set(value);
+      return true;
+    }
+  });
+
+  return proxy;
 }
 
 // index.js
